@@ -44,6 +44,7 @@ public class PlacementManager : MonoBehaviour
         {
             Destroy(structureDictionary[position].gameObject);
             structureDictionary.Remove(position);
+            placementGrid[position.x, position.z] = CellType.Empty;//change back the cell type
         }
     }
 

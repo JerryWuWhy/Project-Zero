@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public InputManager inputManager;
 
     public UIController uiController;
+    public PanelController panelController;
 
     public StructureManager structureManager;
     public PlacementManager placementManager;
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
     private void HousePlacementHandler()
     {
         ClearInputActions();
+        panelController.TogglePanel1();
         inputManager.OnMouseClick += structureManager.PlaceHouse;
     }
 
@@ -62,7 +64,7 @@ public class GameManager : MonoBehaviour
         inputManager.OnMouseClick -= structureManager.PlaceSpecial;
     }
 
-    private void OnCancelHousePlacement()
+    public void OnCancelHousePlacement()
     {
         ClearInputActions();
         inputManager.OnMouseClick -= structureManager.PlaceHouse;

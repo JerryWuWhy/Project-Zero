@@ -11,7 +11,7 @@ public class UIController : MonoBehaviour
     public Button placeRoadButton, placeHouseButton, placeSpecialButton, deleteButton;
     public Color outlineColor;
     private List<Button> buttonList;
-    private Button currentlySelectedButton = null;
+    public Button currentlySelectedButton = null;
 
     private void Start()
     {
@@ -23,7 +23,14 @@ public class UIController : MonoBehaviour
         deleteButton.onClick.AddListener(() => OnButtonClick(deleteButton, OnDelete, OnCancelDelete));
     }
 
-    private void OnButtonClick(Button button, Action placementAction, Action cancelAction)
+    public void DeselectCurrentButton(){
+        // If the button is already selected, deselect it and cancel the action
+        DeselectButton(currentlySelectedButton);
+        currentlySelectedButton = null;
+        OnCancelDelete?.Invoke();
+    }
+
+    public void OnButtonClick(Button button, Action placementAction, Action cancelAction)
     {
         if (currentlySelectedButton == button)
         {
@@ -38,18 +45,19 @@ public class UIController : MonoBehaviour
             ResetButtonColor();
             ModifyOutline(button);
             currentlySelectedButton = button;
-            placementAction?.Invoke(); // Invoke the placement action
+            placementAction?.Invoke();
+            
         }
     }
-
-    private void ModifyOutline(Button button)
+    
+    public void ModifyOutline(Button button)
     {
         var outline = button.GetComponent<Outline>();
         outline.effectColor = outlineColor;
         outline.enabled = true;
     }
 
-    private void DeselectButton(Button button)
+    public void DeselectButton(Button button)
     {
         button.GetComponent<Outline>().enabled = false;
     }

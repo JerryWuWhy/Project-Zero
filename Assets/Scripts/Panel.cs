@@ -2,43 +2,63 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PanelController : MonoBehaviour
 {
     public GameObject panel;  // Reference to the first panel GameObject
     public GameObject panel1; // Reference to the second panel GameObject
     public GameObject panel2; // Reference to the third panel GameObject
-    public SpriteRenderer sr;
+    public Image skinImage;
     public List<Sprite> skins = new List<Sprite>();
-    private int selectedSkin = 0;
-    public GameObject houseskin;
-
+    public int selectedSkin = 0;
+    public StructureManager st;
+    public UIController ui;
+    
+    
     public void NextOption()
     {
+        if (skins.Count == 0)
+        {
+            Debug.LogWarning("Skins list is empty. Cannot change skin.");
+            return;
+        }
+        
         selectedSkin = selectedSkin + 1;
         if (selectedSkin == skins.Count)
         {
             selectedSkin = 0;
         }
 
-        sr.sprite = skins[selectedSkin];
+        skinImage.sprite = skins[selectedSkin];
     }
+
     public void BackOption()
     {
+        if (skins.Count == 0)
+        {
+            Debug.LogWarning("Skins list is empty. Cannot change skin.");
+            return;
+        }
         selectedSkin = selectedSkin - 1;
         if (selectedSkin < 0)
         {
-            selectedSkin = selectedSkin - 1;
+            selectedSkin = skins.Count - 1; // Loop back to the last skin
         }
 
-        sr.sprite = skins[selectedSkin];
+        skinImage.sprite = skins[selectedSkin];
     }
-
+    
     public void PlayGame()
     {
-        
-        
+        // ui.DeselectCurrentButton();
+        st.selectedHouseIndex = selectedSkin;
+        panel.SetActive(false);
+        panel1.SetActive(false);
+        panel2.SetActive(false);
     }
+
     void Start()
     {
         // Ensure all panels are initially hidden
@@ -50,15 +70,21 @@ public class PanelController : MonoBehaviour
     public void TogglePanel()
     {
         panel.SetActive(!panel.activeSelf); // Toggle the first panel's active state
+        panel1.SetActive(false);
+        panel2.SetActive(false);
     }
 
     public void TogglePanel1()
     {
         panel1.SetActive(!panel1.activeSelf); // Toggle the second panel's active state
+        panel.SetActive(false);
+        panel2.SetActive(false);
     }
 
     public void TogglePanel2()
     {
         panel2.SetActive(!panel2.activeSelf); // Toggle the third panel's active state
+        panel.SetActive(false);
+        panel1.SetActive(false);
     }
 }

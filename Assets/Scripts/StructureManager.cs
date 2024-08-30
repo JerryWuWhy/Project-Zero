@@ -9,6 +9,9 @@ public class StructureManager : MonoBehaviour
 {
     public StructurePrefabWeighted[] housesPrefabe, specialPrefabs;
     public PlacementManager placementManager;
+    
+    // Public variable to select house prefab index in the Inspector
+    public int selectedHouseIndex = 0;
 
     private float[] houseWeights, specialWeights;
 
@@ -18,13 +21,17 @@ public class StructureManager : MonoBehaviour
         specialWeights = specialPrefabs.Select(prefabStats => prefabStats.weight).ToArray();
     }
 
+    // Method to place a house using a user-selected prefab index
     public void PlaceHouse(Vector3Int position)
     {
         if (CheckPositionBeforePlacement(position))
         {
-            int randomIndex = GetRandomWeightedIndex(houseWeights);
-            placementManager.PlaceObjectOnTheMap(position, housesPrefabe[randomIndex].prefab, CellType.Structure);
-            AudioPlayer.instance.PlayPlacementSound();
+            // Ensure the selected index is within range
+            if (selectedHouseIndex >= 0 && selectedHouseIndex < housesPrefabe.Length)
+            {
+                placementManager.PlaceObjectOnTheMap(position, housesPrefabe[selectedHouseIndex].prefab, CellType.Structure);
+                AudioPlayer.instance.PlayPlacementSound();
+            }
         }
     }
 
@@ -40,18 +47,12 @@ public class StructureManager : MonoBehaviour
 
     private int GetRandomWeightedIndex(float[] weights)
     {
-        float sum = 0f;
-        for (int i = 0; i < weights.Length; i++)
-        {
-            sum += weights[i];
-        }
-
+        float sum = weights.Sum();
         float randomValue = UnityEngine.Random.Range(0, sum);
         float tempSum = 0;
         for (int i = 0; i < weights.Length; i++)
         {
-            //0->weihg[0] weight[0]->weight[1]
-            if(randomValue >= tempSum && randomValue < tempSum + weights[i])
+            if (randomValue >= tempSum && randomValue < tempSum + weights[i])
             {
                 return i;
             }
@@ -62,19 +63,16 @@ public class StructureManager : MonoBehaviour
 
     private bool CheckPositionBeforePlacement(Vector3Int position)
     {
-        if (placementManager.CheckIfPositionInBound(position) == false)
+        if (!placementManager.CheckIfPositionInBound(position))
         {
-            
             return false;
         }
-        if (placementManager.CheckIfPositionIsFree(position) == false)
+        if (!placementManager.CheckIfPositionIsFree(position))
         {
-            
             return false;
         }
-        if(placementManager.GetNeighboursOfTypeFor(position,CellType.Road).Count <= 0)
+        if (placementManager.GetNeighboursOfTypeFor(position, CellType.Road).Count <= 0)
         {
-            
             return false;
         }
         return true;
@@ -85,6 +83,6 @@ public class StructureManager : MonoBehaviour
 public struct StructurePrefabWeighted
 {
     public GameObject prefab;
-    [Range(0,1)]
+    [Range(0, 1)]
     public float weight;
 }
