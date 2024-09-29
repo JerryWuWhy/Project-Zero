@@ -13,7 +13,7 @@ public class TimeManager : MonoBehaviour
     public static int Year { get; private set; }
     public float dayToRealTime = 1f;
     private float timer;
-    public bool enableRealTimeUpdate = true;
+    public bool enableRealTimeUpdate = false;
     
 
 // Start is called before the first frame update

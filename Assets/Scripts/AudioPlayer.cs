@@ -9,9 +9,8 @@ namespace SVS
     {
         public AudioClip placementSound;
         public AudioSource audioSource;
-
         public static AudioPlayer instance;
-
+        
         private void Awake()
         {
             if (instance == null)
