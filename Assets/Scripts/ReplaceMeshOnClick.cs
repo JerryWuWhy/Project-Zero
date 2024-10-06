@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using System;
+using TMPro;
 
 public class ReplaceMeshOnClick : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class ReplaceMeshOnClick : MonoBehaviour
     public GameObject newPrefab3;
     public GameObject newPrefab4;
     public GameObject newPrefab5;
+    private int price = 0;
 
     // 引用自定义的 Panel 类
     public RectTransform uiRoot;
@@ -22,10 +24,13 @@ public class ReplaceMeshOnClick : MonoBehaviour
     public StructureManager st;
 
     public GameObject upgradeButton; // 预制的按钮
+    public GameObject priceLabel;
 
+    public TMP_Text pricetext;
     // public GameObject buttonPrefab; // 预制的按钮
     // private GameObject spawnedButton; // 生成的按钮
     private GameObject _clickedObject;
+    
 
     private void Update()
     {
@@ -50,31 +55,23 @@ public class ReplaceMeshOnClick : MonoBehaviour
                 // 如果点击到带有 "building" 标签的物体
                 if (clickedObject.CompareTag("building"))
                 {
-                    // // 如果还没有按钮，生成一个按钮
-                    // if (spawnedButton == null)
-                    // {
-                    //     // 生成按钮并设置父物体
-                    //     spawnedButton = Instantiate(buttonPrefab, clickPosition, Quaternion.identity, uiRoot);
-                    //     spawnedButton.GetComponent<RectTransform>().position = uiPos;
-                    // }
-                    // else
-                    // {
-                    //     // 如果按钮已经生成了，移动它到新的点击位置
-                    //     spawnedButton.GetComponent<RectTransform>().position = uiPos;
-                    // }
-
                     upgradeButton.GetComponent<RectTransform>().position = uiPos;
+                    pricetext.text = price + " K";
                     upgradeButton.SetActive(true);
+                    priceLabel.SetActive(true);
                     _clickedObject = clickedObject;
+                    
                 }
                 else
                 {
                     upgradeButton.SetActive(false);
+                    priceLabel.SetActive(false);
                 }
             }
             else
             {
                 upgradeButton.SetActive(false);
+                priceLabel.SetActive(false);
             }
         }
     }
@@ -87,26 +84,35 @@ public class ReplaceMeshOnClick : MonoBehaviour
         {
             Instantiate(newPrefab1, _clickedObject.transform.position, _clickedObject.transform.rotation);
             Destroy(_clickedObject);
+            price = 1;
         }
         else if (panel.selectedSkin == 1)
         {
             Instantiate(newPrefab2, _clickedObject.transform.position, _clickedObject.transform.rotation);
             Destroy(_clickedObject);
+            price = 2;
         }
         else if (panel.selectedSkin == 2)
         {
             Instantiate(newPrefab3, _clickedObject.transform.position, _clickedObject.transform.rotation);
             Destroy(_clickedObject);
+            price = 3;
         }
         else if (panel.selectedSkin == 3)
         {
             Instantiate(newPrefab4, _clickedObject.transform.position, _clickedObject.transform.rotation);
             Destroy(_clickedObject);
+            price = 4;
         }
         else if (panel.selectedSkin == 4)
         {
             Instantiate(newPrefab5, _clickedObject.transform.position, _clickedObject.transform.rotation);
             Destroy(_clickedObject);
+            price = 5;
+        }
+        else
+        {
+            price = 0;
         }
 
         upgradeButton.SetActive(false);
