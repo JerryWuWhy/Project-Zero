@@ -8,9 +8,7 @@ public class BackgroundMusic : MonoBehaviour
 
     void Start()
     {
-        // 开始播放背景音乐
         backgroundMusic.loop = true;
         backgroundMusic.Play();
     }
-
 }

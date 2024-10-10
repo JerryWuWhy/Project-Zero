@@ -7,19 +7,9 @@ using UnityEngine;
 
 public class StructureManager : MonoBehaviour
 {
-    public StructurePrefabWeighted[] housesPrefabe, specialPrefabs;
     public PlacementManager placementManager;
-    
-    // Public variable to select house prefab index in the Inspector
-    public int selectedHouseIndex = 0;
 
-    private float[] houseWeights, specialWeights;
-
-    private void Start()
-    {
-        houseWeights = housesPrefabe.Select(prefabStats => prefabStats.weight).ToArray();
-        specialWeights = specialPrefabs.Select(prefabStats => prefabStats.weight).ToArray();
-    }
+    public int selectedHouseIndex;
 
     // Method to place a house using a user-selected prefab index
     public void PlaceHouse(Vector3Int position)
@@ -27,9 +17,12 @@ public class StructureManager : MonoBehaviour
         if (CheckPositionBeforePlacement(position))
         {
             // Ensure the selected index is within range
-            if (selectedHouseIndex >= 0 && selectedHouseIndex < housesPrefabe.Length)
+            var houseConfigs = ConfigManager.Inst.GetHouseConfigsByLevel(1);
+            if (selectedHouseIndex >= 0 && selectedHouseIndex < houseConfigs.Count)
             {
-                placementManager.PlaceObjectOnTheMap(position, housesPrefabe[selectedHouseIndex].prefab, CellType.Structure);
+                var houseConfig = houseConfigs[selectedHouseIndex];
+                placementManager.PlaceObjectOnTheMap(position, houseConfig.prefab, CellType.Structure);
+                DataManager.Inst.SetHouseData(position, houseConfig.id);
                 AudioPlayer.instance.PlayPlacementSound();
             }
         }
@@ -37,28 +30,14 @@ public class StructureManager : MonoBehaviour
 
     public void PlaceSpecial(Vector3Int position)
     {
-        if (CheckPositionBeforePlacement(position))
-        {
-            int randomIndex = GetRandomWeightedIndex(specialWeights);
-            placementManager.PlaceObjectOnTheMap(position, specialPrefabs[randomIndex].prefab, CellType.Structure);
-            AudioPlayer.instance.PlayPlacementSound();
-        }
-    }
-
-    private int GetRandomWeightedIndex(float[] weights)
-    {
-        float sum = weights.Sum();
-        float randomValue = UnityEngine.Random.Range(0, sum);
-        float tempSum = 0;
-        for (int i = 0; i < weights.Length; i++)
-        {
-            if (randomValue >= tempSum && randomValue < tempSum + weights[i])
-            {
-                return i;
-            }
-            tempSum += weights[i];
-        }
-        return 0;
+        // var houseConfigs = ConfigManager.Inst.GetHouseConfigsByLevel(1);
+        // if (selectedHouseIndex >= 0 && selectedHouseIndex < houseConfigs.Count)
+        // {
+        //     var houseConfig = houseConfigs[selectedHouseIndex];
+        //     placementManager.PlaceObjectOnTheMap(position, houseConfig.prefab, CellType.Structure);
+        //     DataManager.Inst.SetHouseData(position, houseConfig.id);
+        //     AudioPlayer.instance.PlayPlacementSound();
+        // }
     }
 
     private bool CheckPositionBeforePlacement(Vector3Int position)
@@ -67,14 +46,17 @@ public class StructureManager : MonoBehaviour
         {
             return false;
         }
+
         if (!placementManager.CheckIfPositionIsFree(position))
         {
             return false;
         }
+
         if (placementManager.GetNeighboursOfTypeFor(position, CellType.Road).Count <= 0)
         {
             return false;
         }
+
         return true;
     }
 }
@@ -83,6 +65,5 @@ public class StructureManager : MonoBehaviour
 public struct StructurePrefabWeighted
 {
     public GameObject prefab;
-    [Range(0, 1)]
-    public float weight;
+    [Range(0, 1)] public float weight;
 }

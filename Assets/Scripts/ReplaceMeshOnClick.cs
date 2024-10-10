@@ -10,32 +10,24 @@ using TMPro;
 
 public class ReplaceMeshOnClick : MonoBehaviour
 {
-    // 要替换的新模型的 Prefab
-    public GameObject newPrefab1;
-    public GameObject newPrefab2;
-    public GameObject newPrefab3;
-    public GameObject newPrefab4;
-    public GameObject newPrefab5;
     private int price = 0;
-
-    // 引用自定义的 Panel 类
+    
     public RectTransform uiRoot;
-    public PanelController panel; // 确保这个 Panel 在 Inspector 中已经设置
+    public PanelController panel; 
     public StructureManager st;
 
-    public GameObject upgradeButton; // 预制的按钮
+    public GameObject upgradeButton; 
     public GameObject priceLabel;
 
     public TMP_Text pricetext;
-    // public GameObject buttonPrefab; // 预制的按钮
-    // private GameObject spawnedButton; // 生成的按钮
-    private GameObject _clickedObject;
-    
 
+    private GameObject _clickedObject;
+    private Vector3Int _clickedPos;
+    
     private void Update()
     {
         // 检测鼠标点击
-        if (Input.touchCount > 0) // 0 表示左键
+        if (Input.touchCount > 0)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -45,8 +37,8 @@ public class ReplaceMeshOnClick : MonoBehaviour
             {
                 GameObject clickedObject = hit.collider.gameObject;
                 Vector3 clickPosition = hit.point;
-
-
+                _clickedPos = Vector3Int.RoundToInt(hit.point);
+                
                 Vector3 screenPosition = Camera.main.WorldToScreenPoint(clickPosition);
                 RectTransformUtility.ScreenPointToWorldPointInRectangle(uiRoot,
                     screenPosition, null, out var uiPos
@@ -60,7 +52,6 @@ public class ReplaceMeshOnClick : MonoBehaviour
                     upgradeButton.SetActive(true);
                     priceLabel.SetActive(true);
                     _clickedObject = clickedObject;
-                    
                 }
                 else
                 {
@@ -78,43 +69,17 @@ public class ReplaceMeshOnClick : MonoBehaviour
 
     public void OnUpgradeClick()
     {
-        // 判断 selectedSkin 的值并替换相应的模型
- 
-        if (panel.selectedSkin == 0)
-        {
-            Instantiate(newPrefab1, _clickedObject.transform.position, _clickedObject.transform.rotation);
-            Destroy(_clickedObject);
-            price = 1;
-        }
-        else if (panel.selectedSkin == 1)
-        {
-            Instantiate(newPrefab2, _clickedObject.transform.position, _clickedObject.transform.rotation);
-            Destroy(_clickedObject);
-            price = 2;
-        }
-        else if (panel.selectedSkin == 2)
-        {
-            Instantiate(newPrefab3, _clickedObject.transform.position, _clickedObject.transform.rotation);
-            Destroy(_clickedObject);
-            price = 3;
-        }
-        else if (panel.selectedSkin == 3)
-        {
-            Instantiate(newPrefab4, _clickedObject.transform.position, _clickedObject.transform.rotation);
-            Destroy(_clickedObject);
-            price = 4;
-        }
-        else if (panel.selectedSkin == 4)
-        {
-            Instantiate(newPrefab5, _clickedObject.transform.position, _clickedObject.transform.rotation);
-            Destroy(_clickedObject);
-            price = 5;
-        }
-        else
-        {
-            price = 0;
-        }
+        var houseData = DataManager.Inst.GetHouseData(_clickedPos);
+        var houseConfig = ConfigManager.Inst.GetHouseConfig(houseData.houseId);
+        var upgradedConfig = ConfigManager.Inst.GetHouseConfig(houseConfig.series, houseConfig.level + 1);
 
-        upgradeButton.SetActive(false);
+        if (upgradedConfig != null)
+        {
+            Instantiate(upgradedConfig.prefab, _clickedObject.transform.position, _clickedObject.transform.rotation);
+            Destroy(_clickedObject);
+            DataManager.Inst.SetHouseData(_clickedPos, upgradedConfig.id);
+
+            upgradeButton.SetActive(false);
+        }
     }
 }

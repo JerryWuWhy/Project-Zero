@@ -1,59 +1,37 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEditor;
-using System.Collections.Generic;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class PanelController : MonoBehaviour
 {
-    public GameObject panel;  // Reference to the first panel GameObject
-    public GameObject panel1; // Reference to the second panel GameObject
-    public GameObject panel2; // Reference to the third panel GameObject
+    public GameObject panel; 
+    public GameObject panel1; 
+    public GameObject panel2; 
+
     public Image skinImage;
-    public List<Sprite> skins = new List<Sprite>();
-    public int selectedSkin = 0;
+
+    public ConfigManager cf;
     public StructureManager st;
     public UIController ui;
-    
-    
+
+    public int _selectedHouseIndex;
+
     public void NextOption()
     {
-        if (skins.Count == 0)
-        {
-            Debug.LogWarning("Skins list is empty. Cannot change skin.");
-            return;
-        }
-        
-        selectedSkin = selectedSkin + 1;
-        if (selectedSkin == skins.Count)
-        {
-            selectedSkin = 0;
-        }
-
-        skinImage.sprite = skins[selectedSkin];
+        var houseConfigs = ConfigManager.Inst.GetHouseConfigsByLevel(1);
+        _selectedHouseIndex = (_selectedHouseIndex + 1) % houseConfigs.Count;
+        skinImage.sprite = houseConfigs[_selectedHouseIndex].image;
     }
 
     public void BackOption()
     {
-        if (skins.Count == 0)
-        {
-            Debug.LogWarning("Skins list is empty. Cannot change skin.");
-            return;
-        }
-        selectedSkin = selectedSkin - 1;
-        if (selectedSkin < 0)
-        {
-            selectedSkin = skins.Count - 1; // Loop back to the last skin
-        }
-
-        skinImage.sprite = skins[selectedSkin];
+        var houseConfigs = ConfigManager.Inst.GetHouseConfigsByLevel(1);
+        _selectedHouseIndex = (_selectedHouseIndex - 1 + houseConfigs.Count) % houseConfigs.Count;
+        skinImage.sprite = houseConfigs[_selectedHouseIndex].image;
     }
-    
+
     public void PlayGame()
     {
-        // ui.DeselectCurrentButton();
-        st.selectedHouseIndex = selectedSkin;
+        st.selectedHouseIndex = _selectedHouseIndex;
         panel.SetActive(false);
         panel1.SetActive(false);
         panel2.SetActive(false);
@@ -61,7 +39,6 @@ public class PanelController : MonoBehaviour
 
     void Start()
     {
-        // Ensure all panels are initially hidden
         panel.SetActive(false);
         panel1.SetActive(false);
         panel2.SetActive(false);
@@ -69,21 +46,21 @@ public class PanelController : MonoBehaviour
 
     public void TogglePanel()
     {
-        panel.SetActive(!panel.activeSelf); // Toggle the first panel's active state
+        panel.SetActive(!panel.activeSelf);
         panel1.SetActive(false);
         panel2.SetActive(false);
     }
 
     public void TogglePanel1()
     {
-        panel1.SetActive(!panel1.activeSelf); // Toggle the second panel's active state
+        panel1.SetActive(!panel1.activeSelf); 
         panel.SetActive(false);
         panel2.SetActive(false);
     }
 
     public void TogglePanel2()
     {
-        panel2.SetActive(!panel2.activeSelf); // Toggle the third panel's active state
+        panel2.SetActive(!panel2.activeSelf); 
         panel.SetActive(false);
         panel1.SetActive(false);
     }
