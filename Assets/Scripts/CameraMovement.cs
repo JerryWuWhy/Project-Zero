@@ -9,14 +9,11 @@ namespace SVS
         public Camera gameCamera;
         public float cameraMovementSpeed = 5;
         public float speedReducement = 7f;
-
         private float _speed;
-
         private void Start()
         {
             gameCamera = GetComponent<Camera>();
         }
-
         private void Update()
         {
             if (Input.touchCount > 0)
@@ -35,10 +32,8 @@ namespace SVS
             {
                 ReduceSpeed();
             }
-
             gameCamera.transform.position += Time.deltaTime * _speed * Vector3.right;
         }
-
         private void ReduceSpeed()
         {
             _speed = Mathf.Lerp(_speed, Input.GetAxis("Horizontal"), speedReducement * Time.unscaledDeltaTime);

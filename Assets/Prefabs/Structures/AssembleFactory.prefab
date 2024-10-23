@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7852124959437109804}
   m_Layer: 0
   m_Name: AssembleFactory
-  m_TagString: building
+  m_TagString: Mechanic
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

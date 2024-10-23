@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class RoadManager : MonoBehaviour
 {
+    public static RoadManager Inst { get; private set; }
+    
     public PlacementManager placementManager;
 
     public List<Vector3Int> temporaryPlacementPositions = new List<Vector3Int>();
@@ -18,6 +20,7 @@ public class RoadManager : MonoBehaviour
 
     private void Start()
     {
+        Inst = this;
         roadFixer = GetComponent<RoadFixer>();
     }
 
@@ -63,9 +66,7 @@ public class RoadManager : MonoBehaviour
                 placementManager.PlaceTemporaryStructure(temporaryPosition, roadFixer.deadEnd, CellType.Road);
             }
         }
-
         FixRoadPrefabs();
-
     }
 
     private void FixRoadPrefabs()

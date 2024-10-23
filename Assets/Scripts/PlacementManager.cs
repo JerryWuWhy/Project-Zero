@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class PlacementManager : MonoBehaviour
 {
+    public static PlacementManager Inst { get; private set; }
     public int width, height;
     Grid placementGrid;
-
     private Dictionary<Vector3Int, StructureModel> temporaryRoadobjects = new Dictionary<Vector3Int, StructureModel>();
     private Dictionary<Vector3Int, StructureModel> structureDictionary = new Dictionary<Vector3Int, StructureModel>();
 
     private void Start()
     {
+        Inst = this;
         placementGrid = new Grid(width, height);
     }
 
@@ -134,5 +135,9 @@ public class PlacementManager : MonoBehaviour
         else if (structureDictionary.ContainsKey(position))
             structureDictionary[position].SwapModel(newModel, rotation);
     }
-    
+
+    public StructureModel GetStructModel(Vector3Int pos)
+    {
+        return structureDictionary.ContainsKey(pos) ? structureDictionary[pos] : null;
+    }
 }

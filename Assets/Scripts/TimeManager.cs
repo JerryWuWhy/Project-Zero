@@ -15,13 +15,33 @@ public class TimeManager : MonoBehaviour
     public static int Year { get; private set; }
     public float dayToRealTime = 1f;
     private float timer;
-    public bool enableRealTimeUpdate = false; // Unity UI Text (or)
-    public TextMeshProUGUI tmpText;
-    
+    public bool enableRealTimeUpdate = true; 
+    public TextMeshProUGUI timeText;
+    public TextMeshProUGUI btnText;
+
+    private void OnEnable()
+    {
+        OnDayChanged += UpdateTime;
+        OnMonthChanged += UpdateTime;
+        OnYearChanged += UpdateTime;
+    }
+
+    private void OnDisable()
+    {
+        OnDayChanged -= UpdateTime;
+        OnMonthChanged -= UpdateTime;
+        OnYearChanged -= UpdateTime;
+    }  
+
+    private void UpdateTime()
+    {
+        timeText.text = $"{TimeManager.Year:0000}.{TimeManager.Month:00}.{TimeManager.Day:00}";
+    }
 
 // Start is called before the first frame update
     void Start()
     {
+        
         Day = 01;
         Month = 01;
         Year = 2025;
@@ -39,8 +59,6 @@ public class TimeManager : MonoBehaviour
         {
             return;
         }
-
-        else
         {
             if (timer <= 0)
             {
@@ -52,50 +70,34 @@ public class TimeManager : MonoBehaviour
                     Day = 1;
                     OnMonthChanged?.Invoke();
                 }
-
                 if (Month >= 12)
                 {
                     Year++;
                     Month = 1;
                     OnYearChanged?.Invoke();
                 }
-
                 timer = dayToRealTime;
             }
         }
     }
 
-
     private bool _paused;
     public void OnClickPause()
     {
-        tmpText.text = "Pause";
+        btnText.text = "Pause";
         if (_paused = !_paused)
         {
-            tmpText.text = "Continue";
+            btnText.text = "Continue";
             Pause(_paused);
-            
         }
         else
         {
             Pause(_paused);
         }
-
-            
-
- 
-
-        
-            
-        
-        
-        
-
     }
 
     private void Pause(bool isPaused)
     {
         enableRealTimeUpdate = !isPaused;
     }
-
 }

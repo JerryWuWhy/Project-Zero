@@ -33,7 +33,6 @@ public class ConfigManager : MonoBehaviour
                 configs.Add(houseConfig);
             }
         }
-
         return configs;
     }
 

@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 148874258738702541}
   m_Layer: 0
   m_Name: CoalFactory
-  m_TagString: building
+  m_TagString: Coal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -7,9 +7,16 @@ using UnityEngine;
 
 public class StructureManager : MonoBehaviour
 {
+    public static StructureManager Inst { get; private set; }
+    
     public PlacementManager placementManager;
 
     public int selectedHouseIndex;
+
+    private void Awake()
+    {
+        Inst = this;
+    }
 
     // Method to place a house using a user-selected prefab index
     public void PlaceHouse(Vector3Int position)
@@ -26,18 +33,6 @@ public class StructureManager : MonoBehaviour
                 AudioPlayer.instance.PlayPlacementSound();
             }
         }
-    }
-
-    public void PlaceSpecial(Vector3Int position)
-    {
-        // var houseConfigs = ConfigManager.Inst.GetHouseConfigsByLevel(1);
-        // if (selectedHouseIndex >= 0 && selectedHouseIndex < houseConfigs.Count)
-        // {
-        //     var houseConfig = houseConfigs[selectedHouseIndex];
-        //     placementManager.PlaceObjectOnTheMap(position, houseConfig.prefab, CellType.Structure);
-        //     DataManager.Inst.SetHouseData(position, houseConfig.id);
-        //     AudioPlayer.instance.PlayPlacementSound();
-        // }
     }
 
     private bool CheckPositionBeforePlacement(Vector3Int position)
@@ -59,11 +54,4 @@ public class StructureManager : MonoBehaviour
 
         return true;
     }
-}
-
-[Serializable]
-public struct StructurePrefabWeighted
-{
-    public GameObject prefab;
-    [Range(0, 1)] public float weight;
 }

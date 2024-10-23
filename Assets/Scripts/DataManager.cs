@@ -14,7 +14,6 @@ public class DataManager : MonoBehaviour
     }
 
     public List<HouseData> houses;
-
     private void Awake()
     {
         Inst = this;

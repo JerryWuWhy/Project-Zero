@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace SVS
 {
-
     public class AudioPlayer : MonoBehaviour
     {
         public AudioClip placementSound;
@@ -17,7 +16,6 @@ namespace SVS
                 instance = this;
             else if (instance != this)
                 Destroy(this.gameObject);
-
         }
 
         public void PlayPlacementSound()

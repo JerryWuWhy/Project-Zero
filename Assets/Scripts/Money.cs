@@ -4,7 +4,6 @@ using TMPro;           // Required if using TextMeshPro
 
 public class Money : MonoBehaviour
 {
-    public Text uiText;            // Unity UI Text (or)
     public TextMeshProUGUI tmpText; // TextMeshPro component if you use TextMeshPro
     public float interval = 1f;     // Time in seconds between increments
     public float increaseAmount = 0.1f; // How much to increase per interval
@@ -12,8 +11,6 @@ public class Money : MonoBehaviour
     public string unit = " K"; // The unit to display after the number
 
     private float timer = 0f;
-
-    // Update is called once per frame
     void Update()
     {
             
@@ -31,14 +28,8 @@ public class Money : MonoBehaviour
                     counter += increaseAmount;
 
                     // Update the UI text with float value formatted to 2 decimal places and add the unit
-                    if (uiText != null)
-                        uiText.text = counter.ToString("F2") + unit;
-                    else if (tmpText != null)
+                    if (tmpText != null)
                         tmpText.text = counter.ToString("F2") + unit;
                 }
-            
-
-        
-        
     }
 }
