@@ -9,24 +9,24 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
     public HouseButton houseButton;
     public RoadButton roadButton;
     public DeleteButton deleteButton;
-
+    public TextMeshProUGUI price;
     public GameObject upgradeButton;
-    public GameObject priceLabel;
-    public TMP_Text priceText;
-
+    public Money money;
+    public HousePanel housepanel;
+    public GameObject coalpanel;
+    public GameObject Gashponpanel;
     public enum State
     {
         None,
         RoadPlacement,
         HousePlacement,
         Remove,
-        Upgrade
     }
 
     public static Hud Inst { get; private set; }
+    public DataManager.HouseData ClickHouseData { get; private set; }
 
     private State _state;
-    private Vector3Int _clickedPos;
 
     private void Awake()
     {
@@ -59,20 +59,43 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        housepanel.log.gameObject.SetActive(false);
         if (_state == State.None)
         {
             var pos = RaycastGround(eventData.position);
             if (pos.HasValue)
             {
                 var houseData = DataManager.Inst.GetHouseData(pos.Value);
+                ClickHouseData = houseData;
                 if (houseData != null)
                 {
-                    _clickedPos = pos.Value;
-                    upgradeButton.SetActive(true);
-                    upgradeButton.GetComponent<RectTransform>().position = eventData.position + new Vector2(0f, 200f);
+                    var houseConfig = ConfigManager.Inst.GetHouseConfig(houseData.houseId);
+                    if (houseConfig.series is 6)
+                    {
+                        coalpanel.SetActive(true);
+                    }
+                    if (houseConfig.series is 7)
+                    {
+                        Gashponpanel.SetActive(true);
+                    }
+                    else
+                    {
+                        var upgradedConfig =
+                            ConfigManager.Inst.GetHouseConfig(houseConfig.series, houseConfig.level + 1);
+                        if (upgradedConfig == null)
+                        {
+                            return;
+                        }
+
+                        upgradeButton.SetActive(true);
+                        price.text = upgradedConfig.price.ToString() + "K";
+                        upgradeButton.GetComponent<RectTransform>().position =
+                            eventData.position + new Vector2(0f, 200f);
+                    }
                 }
                 else
                 {
+                    ClickHouseData = null;
                     upgradeButton.SetActive(false);
                 }
             }
@@ -82,7 +105,16 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
             var pos = RaycastGround(eventData.position);
             if (pos.HasValue)
             {
-                StructureManager.Inst.PlaceHouse(pos.Value);
+                var houseConfigs = ConfigManager.Inst.GetHouseConfigsByLevel(1);
+                if (money.counter >= houseConfigs[housepanel._selectedHouseIndex].price)
+                {
+                    StructureManager.Inst.PlaceHouse(pos.Value);
+                    money.counter -= houseConfigs[housepanel._selectedHouseIndex].price;
+                }
+                else
+                {
+                    housepanel.log.gameObject.SetActive(true);
+                }
             }
         }
         else if (_state == State.Remove)
@@ -109,18 +141,28 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
 
     public void OnUpgradeClick()
     {
-        var houseData = DataManager.Inst.GetHouseData(_clickedPos);
+        var houseData = ClickHouseData;
+        var housePos = houseData.pos;
         var houseConfig = ConfigManager.Inst.GetHouseConfig(houseData.houseId);
         var upgradedConfig = ConfigManager.Inst.GetHouseConfig(houseConfig.series, houseConfig.level + 1);
 
         if (upgradedConfig != null)
         {
-            var model = PlacementManager.Inst.GetStructModel(_clickedPos);
-            Instantiate(upgradedConfig.prefab, model.transform.position, model.transform.rotation);
-            Destroy(model.gameObject);
-            DataManager.Inst.SetHouseData(_clickedPos, upgradedConfig.id);
-
-            upgradeButton.SetActive(false);
+            housepanel.log.gameObject.SetActive(false);
+            var houseConfigs = ConfigManager.Inst.GetHouseConfigsByLevel(1);
+            if (money.counter >= houseConfigs[housepanel._selectedHouseIndex].price)
+            {
+                var model = PlacementManager.Inst.GetStructModel(housePos);
+                Instantiate(upgradedConfig.prefab, model.transform.position, model.transform.rotation);
+                Destroy(model.gameObject);
+                DataManager.Inst.SetHouseData(housePos, upgradedConfig.id);
+                money.counter -= houseConfigs[housepanel._selectedHouseIndex].price;
+                upgradeButton.SetActive(false);
+            }
+            else
+            {
+                housepanel.log.gameObject.SetActive(true);
+            }
         }
     }
 

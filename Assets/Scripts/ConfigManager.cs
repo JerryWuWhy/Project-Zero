@@ -2,10 +2,18 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum OutputType
+{
+    None,
+    Coal,
+    Iron,
+    Lithium
+}
+
 public class ConfigManager : MonoBehaviour
 {
     public static ConfigManager Inst { get; private set; }
-    
+
     [Serializable]
     public class HouseConfig
     {
@@ -14,6 +22,8 @@ public class ConfigManager : MonoBehaviour
         public int level;
         public GameObject prefab;
         public Sprite image;
+        public int price;
+        public OutputType outputType;
     }
 
     public HouseConfig[] houseConfigs;
@@ -33,6 +43,7 @@ public class ConfigManager : MonoBehaviour
                 configs.Add(houseConfig);
             }
         }
+
         return configs;
     }
 

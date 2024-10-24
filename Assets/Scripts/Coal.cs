@@ -1,108 +1,66 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;  
+using UnityEngine.UI;
 using TMPro;
 
 public class Coal : MonoBehaviour
 {
-    public TextMeshProUGUI tmpText; // TextMeshPro component if you use TextMeshPro
-    public TextMeshProUGUI tmpTextsingle;
-    public float interval = 1f;     // Time in seconds between increments
-    public float increaseAmount = 0.1f; // How much to increase per interval
-    public float increaseAmountSingle = 0.1f;
-    private float counter = 0f;     // The float value to increase
-    private float countersingle = 0f;
-    public string unit = " T"; // The unit to display after the number
-    private GameObject _clickedObject;
+    public TextMeshProUGUI tmpTextC; 
+    public TextMeshProUGUI tmpTextI;
+    public TextMeshProUGUI tmpTextL;
+    public float interval = 1f; // Time in seconds between increments
+    public float increaseAmountCoal = 0.1f; // How much to increase per interval
+    public float increaseAmountIron = 0.15f;
+    public float increaseAmountLithium = 0.01f;
+    public float counterC = 0f; // The float value to increase
+    public float counterI = 0f;
+    public float counterL = 0f;
+    public string unit = "T"; // The unit to display after the number
     private float timer = 0f;
-    private Vector3Int _clickedPos;
-    public RectTransform uiRoot;
-    public GameObject panel;
-    public void Iron()
-    {
-        increaseAmountSingle = 0f;
-        Debug.Log("1");
-    }
 
-    public void Lithium()
+    private void Update()
     {
-        increaseAmountSingle = 0f;
-        Debug.Log("1");
-    }
-    
-    void Update()
-    {
-        GameObject[] allObjects = FindObjectsOfType<GameObject>();
-        int count = 0;
-
-        foreach (GameObject obj1 in allObjects)
+        var countC = 0;
+        var countI = 0;
+        var countl = 0;
+        var houses = DataManager.Inst.houses;
+        foreach (var houseData in houses)
         {
-            if (obj1.name == "CoalFactory(Clone)")
+            if (houseData.outputType == OutputType.Coal)
             {
-                count++;
+                ++countC;
             }
-        }
-        GameObject obj = GameObject.Find("CoalFactory(Clone)");
-        increaseAmount = 0.1f * count;
-
-        if (obj != null)
-        {
-            // Increment the timer based on time passed since last frame
-            timer += Time.deltaTime;
-
-            // Check if enough time has passed based on the interval
-            if (timer >= interval)
+            if (houseData.outputType == OutputType.Iron)
             {
-                // Reset the timer
-                timer = 0f;
-
-                // Increment the counter by the desired amount
-                counter += increaseAmount;
-                countersingle += increaseAmountSingle;
-
-                // Update the UI text with float value formatted to 2 decimal places and add the unit
-                if (tmpText != null)
-                    tmpText.text = counter.ToString("F2") + unit;
-                if (tmpTextsingle != null)
-                    tmpTextsingle.text = increaseAmountSingle + unit;
+                ++countI;
+            }
+            if (houseData.outputType == OutputType.Lithium)
+            {
+                ++countl;
             }
         }
 
-        // Check for touch input
-        if (Input.touchCount > 0)
+        increaseAmountCoal = 0.1f * countC;
+        increaseAmountIron = 0.15f * countI;
+        increaseAmountLithium = 0.01f * countl;
+
+        // Increment the timer based on time passed since last frame
+        timer += Time.deltaTime;
+
+        // Check if enough time has passed based on the interval
+        if (timer >= interval)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            // Reset the timer
+            timer = 0f;
 
-            // If a raycast hits a collider
-            if (Physics.Raycast(ray, out hit))
-            {
-                GameObject clickedObject = hit.collider.gameObject;
-                Vector3 clickPosition = hit.point;
-                _clickedPos = Vector3Int.RoundToInt(hit.point);
-
-                Vector3 screenPosition = Camera.main.WorldToScreenPoint(clickPosition);
-                RectTransformUtility.ScreenPointToWorldPointInRectangle(uiRoot, screenPosition, null, out var uiPos);
-
-                // If the clicked object has the "Coal" tag
-                if (clickedObject.CompareTag("Coal"))
-                {
-                    panel.GetComponent<RectTransform>().position = uiPos;
-                    panel.SetActive(true);
-                    //panel1.blocksRaycasts = false; // Disable raycasts when the panel is active
-                    _clickedObject = clickedObject;
-                }
-                else
-                {
-                    panel.SetActive(false);
-                    //panel1.blocksRaycasts = true; // Enable raycasts when the panel is inactive
-                }
-            }
-            else
-            {
-                panel.SetActive(false);
-                //panel1.blocksRaycasts = true; // Enable raycasts when the panel is inactive
-            }
+            // Increment the counter by the desired amount
+            counterC += increaseAmountCoal;
+            counterI += increaseAmountIron;
+            counterL += increaseAmountLithium;
+            
+                tmpTextC.text = counterC.ToString("F2") + unit;
+                tmpTextI.text = counterI.ToString("F2") + unit;
+                tmpTextL.text = counterL.ToString("F2") + unit;
         }
     }
 }

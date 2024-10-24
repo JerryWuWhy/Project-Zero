@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using UnityEngine.UI;  // Required if using Unity's built-in UI Text component
-using TMPro;           
+using UnityEngine.UI; // Required if using Unity's built-in UI Text component
+using TMPro;
 
 public class TimeManager : MonoBehaviour
 {
@@ -15,7 +15,7 @@ public class TimeManager : MonoBehaviour
     public static int Year { get; private set; }
     public float dayToRealTime = 1f;
     private float timer;
-    public bool enableRealTimeUpdate = true; 
+    public bool enableRealTimeUpdate = true;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI btnText;
 
@@ -31,34 +31,33 @@ public class TimeManager : MonoBehaviour
         OnDayChanged -= UpdateTime;
         OnMonthChanged -= UpdateTime;
         OnYearChanged -= UpdateTime;
-    }  
+    }
 
     private void UpdateTime()
     {
         timeText.text = $"{TimeManager.Year:0000}.{TimeManager.Month:00}.{TimeManager.Day:00}";
+      
     }
 
 // Start is called before the first frame update
     void Start()
     {
-        
         Day = 01;
         Month = 01;
         Year = 2025;
         timer = dayToRealTime;
- 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
         var passDay = Time.deltaTime / dayToRealTime;
         timer -= Time.deltaTime;
         if (!enableRealTimeUpdate)
         {
             return;
         }
+
         {
             if (timer <= 0)
             {
@@ -70,18 +69,21 @@ public class TimeManager : MonoBehaviour
                     Day = 1;
                     OnMonthChanged?.Invoke();
                 }
+
                 if (Month >= 12)
                 {
                     Year++;
                     Month = 1;
                     OnYearChanged?.Invoke();
                 }
+
                 timer = dayToRealTime;
             }
         }
     }
 
     private bool _paused;
+
     public void OnClickPause()
     {
         btnText.text = "Pause";

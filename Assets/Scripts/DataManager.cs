@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
+    
     public static DataManager Inst { get; private set; }
 
     [Serializable]
@@ -11,6 +12,7 @@ public class DataManager : MonoBehaviour
     {
         public int houseId;
         public Vector3Int pos;
+        public OutputType outputType;
     }
 
     public List<HouseData> houses;
@@ -29,10 +31,13 @@ public class DataManager : MonoBehaviour
                 return;
             }
         }
+
+        var houseConfig = ConfigManager.Inst.GetHouseConfig(houseId);
         houses.Add(new HouseData
         {
             houseId = houseId,
-            pos = pos
+            pos = pos,
+            outputType = houseConfig.outputType
         });
     }
 
