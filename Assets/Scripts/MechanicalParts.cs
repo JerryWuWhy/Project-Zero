@@ -9,14 +9,17 @@ public class MechanicalParts : MonoBehaviour
     
     public TextMeshProUGUI tmpText; // TextMeshPro component if you use TextMeshPro
     public float interval = 1f; // Time in seconds between increments
-    public float increaseAmount = 0.1f; // How much to increase per interval
+    public float increaseAmount = 50f; // How much to increase per interval
     public float counter = 0f; // number of building
     public string unit = " T"; // The unit to display after the number
     private float timer = 0f;
     public Coal coal;
     public float countM = 0f;//stock
     public ConfigManager configmanager;
-
+    public float Ecost = 500f;
+    public float Fcost = 100f;
+    public TextMeshProUGUI Eprice;
+    public TextMeshProUGUI Fprice;
     private void Awake()
     {
         Inst = this;
@@ -24,6 +27,8 @@ public class MechanicalParts : MonoBehaviour
 
     private void Update()
     {
+        Eprice.text = Ecost.ToString();
+        Fprice.text = Fcost.ToString();
         counter = 0;
         var houses = DataManager.Inst.houses;
         foreach (var houseData in houses)
@@ -34,7 +39,7 @@ public class MechanicalParts : MonoBehaviour
             }
         }
 
-        increaseAmount = 0.1f * counter;
+        increaseAmount = 50f * counter;
 
         timer += Time.deltaTime;
 
@@ -44,8 +49,6 @@ public class MechanicalParts : MonoBehaviour
             // Reset the timer
             timer = 0f;
             countM += increaseAmount;
-
-
             tmpText.text = countM.ToString("F2") + unit;
         }
     }

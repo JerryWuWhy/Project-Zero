@@ -20,9 +20,11 @@ public class Coal : MonoBehaviour
 
     private void Update()
     {
+        
         var countC = 0;
         var countI = 0;
         var countl = 0;
+        
         var houses = DataManager.Inst.houses;
         foreach (var houseData in houses)
         {

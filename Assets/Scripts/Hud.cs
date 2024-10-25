@@ -16,6 +16,8 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
     public GameObject coalpanel;
     public GameObject Gashponpanel;
     public GameObject Partpanel;
+    public CarbonSum carbonsum;
+    public Coal coal;
     public enum State
     {
         None,
@@ -74,6 +76,7 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
                     if (houseConfig.series is 6)
                     {
                         coalpanel.SetActive(true);
+                        
                     }
                     if (houseConfig.series is 7)
                     {

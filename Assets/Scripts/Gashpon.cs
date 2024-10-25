@@ -9,16 +9,16 @@ public class Gashpon : MonoBehaviour
     public int times = 1;
     public HousePanel housepanel;
     private GameObject _clickedObject;
-    private Vector3Int _clickedPos;
+    private Vector3Int _clickedPos; 
     public RectTransform uiRoot; // If not used, you can remove this line
     public GameObject panel;
     public TextMeshProUGUI resultText;      // Make sure this is assigned in the Inspector
     public Button playButton;    // Ensure the button is assigned in the Inspector
-    public List<GameObject> objectsToSpawn;  // 要生成的对象
     public Camera mainCamera;         // 主相机
     public float spawnDistance = 10f; // 生成的距离
     public float fixedY = 0.0f;
-    
+    public int carcountE = 0;
+    public int carcountF = 0;
     private string[] prizes = { "Normal", "Rare", "Epic", "Legendary", "Unique" };
     // 对应奖品的权重数组，按顺序对应上面的 prizes
     private float[] prizeWeights = { 60, 25, 10, 4, 1 };  // 权重：Normal 最常见, Unique 最稀有
@@ -49,11 +49,11 @@ public class Gashpon : MonoBehaviour
                 coal.counterI -= IronCount;
                 coal.counterL -= LithiumCount;
                 prizeWeights[4] += LithiumCount * 40f;
-                string prize = GetWeightedPrize();
-                resultText.text = $"{prize} Car Air Dropped!";
+                int index = GetWeightedPrizeIndex();
+                resultText.text = $"{prizes[index]} Car Air Dropped!";
                 for (int i = 0; i < times; i++)
                 {
-                    SpawnObject();
+                    SpawnObject(index);
                 }
                 
                 LithiumCount = 0;
@@ -68,7 +68,7 @@ public class Gashpon : MonoBehaviour
         }
     }
 
-    string GetWeightedPrize()
+    public int GetWeightedPrizeIndex()
     {
         float totalWeight = 0;
 
@@ -88,17 +88,15 @@ public class Gashpon : MonoBehaviour
             cumulativeWeight += prizeWeights[i];
             if (randomValue < cumulativeWeight)
             {
-                return prizes[i];  // 返回选中的奖品
+                return i; // 返回选中的奖品
             }
         }
 
-        return prizes[0];  // 默认返回第一个奖品（理论上不会发生）
+        return 0;  // 默认返回第一个奖品（理论上不会发生）
     }
 
-    public void SpawnObject()
+    public void SpawnObject(int index)
     {
-        int randomIndex = UnityEngine.Random.Range(0, objectsToSpawn.Count);
-
         // In the viewport, choose a random point for x and z
         float randomX = UnityEngine.Random.Range(0.15f, 0.9f);
         float randomY = UnityEngine.Random.Range(0.15f, 0.9f);
@@ -111,14 +109,32 @@ public class Gashpon : MonoBehaviour
         worldPosition.y = fixedY;
 
         // Instantiate the object from the list based on the random index
-        GameObject objectToSpawn = objectsToSpawn[randomIndex];
+        var carConfig = CarConfigManager.Inst.CarConfigs[index];
+        GameObject objectToSpawn = carConfig.prefab;
         Instantiate(objectToSpawn, worldPosition, Quaternion.identity);
+        DataManager.Inst.AddCarData(worldPosition, carConfig.id);
     }
 
     private void Update()
     {
         LithiumAmount.text = LithiumCount.ToString();
         IronAmount.text = IronCount.ToString();
+        
+        carcountE = 0;
+        carcountF = 0;
+        var cars = DataManager.Inst.cars;
+        foreach (var carData in cars)
+        {
+            if (carData.carbonType == CarbonType.decrease)
+            {
+                ++carcountE;
+            }
+            else if (carData.carbonType == CarbonType.increase)
+            {
+                ++carcountF;
+            }
+
+        }
     }
 
     public void OnLithiumRoll()

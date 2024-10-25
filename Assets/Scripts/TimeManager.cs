@@ -42,6 +42,7 @@ public class TimeManager : MonoBehaviour
 // Start is called before the first frame update
     void Start()
     {
+        Pause(false);
         Day = 01;
         Month = 01;
         Year = 2025;
