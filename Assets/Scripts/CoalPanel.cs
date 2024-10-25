@@ -3,7 +3,6 @@ using UnityEngine;
 public class CoalPanel : MonoBehaviour
 {
     public CoalPanel coalpanel;
-    public Coal coal;
     public void OnIronClick()
     {
         Hud.Inst.ClickHouseData.outputType = OutputType.Iron;

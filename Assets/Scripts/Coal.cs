@@ -9,9 +9,9 @@ public class Coal : MonoBehaviour
     public TextMeshProUGUI tmpTextI;
     public TextMeshProUGUI tmpTextL;
     public float interval = 1f; // Time in seconds between increments
-    public float increaseAmountCoal = 0.1f; // How much to increase per interval
-    public float increaseAmountIron = 0.15f;
-    public float increaseAmountLithium = 0.01f;
+    public float increaseAmountCoal = 5f; // How much to increase per interval
+    public float increaseAmountIron = 7.5f;
+    public float increaseAmountLithium = 0.5f;
     public float counterC = 0f; // The float value to increase
     public float counterI = 0f;
     public float counterL = 0f;
@@ -40,9 +40,9 @@ public class Coal : MonoBehaviour
             }
         }
 
-        increaseAmountCoal = 0.1f * countC;
-        increaseAmountIron = 0.15f * countI;
-        increaseAmountLithium = 0.01f * countl;
+        increaseAmountCoal = 5f * (countC - MechanicalParts.Inst.counter);
+        increaseAmountIron = 7.5f * countI;
+        increaseAmountLithium = 0.5f * countl;
 
         // Increment the timer based on time passed since last frame
         timer += Time.deltaTime;

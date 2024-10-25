@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 public class Gashpon : MonoBehaviour
 {
+    public int times = 1;
+    public HousePanel housepanel;
     private GameObject _clickedObject;
     private Vector3Int _clickedPos;
     public RectTransform uiRoot; // If not used, you can remove this line
@@ -30,14 +32,6 @@ public class Gashpon : MonoBehaviour
 
     private void Start()
     {
-
-        // Ensure the button is not null before adding a listener
-        if (playButton != null)
-        {
-            playButton.onClick.RemoveAllListeners();
-            playButton.onClick.AddListener(Next);
-        }
-        
         // Ensure the text field is not null before assigning text
         if (resultText != null)
         {
@@ -47,23 +41,30 @@ public class Gashpon : MonoBehaviour
 
     public void Next()
     {
-        // 使用加权随机选择奖品
-        
-        
-        // Display the prize in the text field, ensuring resultText is not null
         if (resultText != null)
         {
-            coal.counterI -= IronCount;
-            coal.counterL -= LithiumCount;
-            prizeWeights[4] += LithiumCount * 40f;
-            string prize = GetWeightedPrize();
-            resultText.text = $"{prize} Car Air Dropped!";
-            SpawnObject();
-            LithiumCount = 0;
-            IronCount = 0;
-            prizeWeights[4] = 1f;
-            prizeWeights[0] = 60f;
-            
+            housepanel.log.gameObject.SetActive(false);
+            if (LithiumCount <= coal.counterL && IronCount <= coal.counterI)
+            {
+                coal.counterI -= IronCount;
+                coal.counterL -= LithiumCount;
+                prizeWeights[4] += LithiumCount * 40f;
+                string prize = GetWeightedPrize();
+                resultText.text = $"{prize} Car Air Dropped!";
+                for (int i = 0; i < times; i++)
+                {
+                    SpawnObject();
+                }
+                
+                LithiumCount = 0;
+                IronCount = 0;
+                prizeWeights[4] = 1f;
+                prizeWeights[0] = 60f;
+            }
+            else
+            {
+                housepanel.log.gameObject.SetActive(true);
+            }
         }
     }
 
@@ -74,7 +75,6 @@ public class Gashpon : MonoBehaviour
         // 计算权重总和
         foreach (float weight in prizeWeights)
         {
-            Debug.LogError(weight);
             totalWeight += weight;
         }
 
@@ -95,7 +95,7 @@ public class Gashpon : MonoBehaviour
         return prizes[0];  // 默认返回第一个奖品（理论上不会发生）
     }
 
-    void SpawnObject()
+    public void SpawnObject()
     {
         int randomIndex = UnityEngine.Random.Range(0, objectsToSpawn.Count);
 
@@ -129,5 +129,6 @@ public class Gashpon : MonoBehaviour
     public void OnIronRoll()
     {
         IronCount += 1;
+        times += 1;
     }
 }

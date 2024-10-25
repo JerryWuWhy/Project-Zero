@@ -7,7 +7,8 @@ public enum OutputType
     None,
     Coal,
     Iron,
-    Lithium
+    Lithium,
+    Part
 }
 
 public class ConfigManager : MonoBehaviour
@@ -43,7 +44,7 @@ public class ConfigManager : MonoBehaviour
                 configs.Add(houseConfig);
             }
         }
-
+        
         return configs;
     }
 

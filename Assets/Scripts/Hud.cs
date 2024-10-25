@@ -15,6 +15,7 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
     public HousePanel housepanel;
     public GameObject coalpanel;
     public GameObject Gashponpanel;
+    public GameObject Partpanel;
     public enum State
     {
         None,
@@ -77,6 +78,10 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
                     if (houseConfig.series is 7)
                     {
                         Gashponpanel.SetActive(true);
+                    }
+                    if (houseConfig.series is 5)
+                    {
+                        Partpanel.SetActive(true);
                     }
                     else
                     {
