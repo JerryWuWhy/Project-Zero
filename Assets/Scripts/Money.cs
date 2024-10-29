@@ -10,6 +10,7 @@ public class Money : MonoBehaviour
     public float counter = 0f;     // The float value to increase
     public string unit = " K"; // The unit to display after the number
 
+    public static Money Inst { get; private set; }
     private float timer = 0f;
     void Update()
     {

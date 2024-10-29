@@ -17,6 +17,7 @@ public class Coal : MonoBehaviour
     public float counterL = 0f;
     public string unit = "T"; // The unit to display after the number
     private float timer = 0f;
+    public static Coal Inst { get; private set; }
 
     private void Update()
     {

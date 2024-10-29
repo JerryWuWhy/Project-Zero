@@ -8,7 +8,7 @@ public class CarbonSum : MonoBehaviour
     public Slider slider;
     public GameObject goodimage;
     public GameObject badimage;
-    public float carbonvalue = 0.05f;
+    public float carbonvalue = 0.005f;
     // Start is called before the first frame update
     public float coalnumber = 0f;
     public ConfigManager configmanager;
@@ -33,7 +33,7 @@ public class CarbonSum : MonoBehaviour
             }
             
         }
-        slider.value -= (carbonvalue + coalnumber*0.01f + partnumber*0.01f - gashpon.carcountE*0.01f + gashpon.carcountF*0.01f) * Time.deltaTime;  
+        slider.value -= (carbonvalue + coalnumber*0.001f + partnumber*0.001f - gashpon.carcountE*0.01f + gashpon.carcountF*0.005f) * Time.deltaTime;  
         if (slider.value >= 1)
         {
             goodimage.SetActive(true);

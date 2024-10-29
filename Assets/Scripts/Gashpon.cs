@@ -112,7 +112,7 @@ public class Gashpon : MonoBehaviour
         var carConfig = CarConfigManager.Inst.CarConfigs[index];
         GameObject objectToSpawn = carConfig.prefab;
         Instantiate(objectToSpawn, worldPosition, Quaternion.identity);
-        DataManager.Inst.AddCarData(worldPosition, carConfig.id);
+        DataManager.Inst.AddCarData(worldPosition, carConfig.id, carConfig.carbonType);
     }
 
     private void Update()

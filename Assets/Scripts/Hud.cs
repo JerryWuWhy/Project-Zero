@@ -18,6 +18,7 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
     public GameObject Partpanel;
     public CarbonSum carbonsum;
     public Coal coal;
+    public GameObject Marketpanel;
     public enum State
     {
         None,
@@ -85,6 +86,10 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
                     if (houseConfig.series is 5)
                     {
                         Partpanel.SetActive(true);
+                    }
+                    if (houseConfig.series is 4)
+                    {
+                        Marketpanel.SetActive(true);
                     }
                     else
                     {

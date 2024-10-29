@@ -63,12 +63,13 @@ public class DataManager : MonoBehaviour
     }
 
     public List<CarData> cars;
-    public void AddCarData(Vector3 pos, int carId)
+    public void AddCarData(Vector3 pos, int carId, CarbonType carbonType)
     {
         cars.Add(new CarData
         {
             carId = carId,
             pos = pos,
+            carbonType = carbonType
         });
     }
 
