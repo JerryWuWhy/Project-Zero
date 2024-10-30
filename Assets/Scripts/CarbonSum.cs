@@ -52,7 +52,7 @@ public class CarbonSum : MonoBehaviour
         }
         if (timemanager.enableRealTimeUpdate)
         {
-            sliders.value -= (carbonvalue + coalnumber*0.001f + partnumber*0.001f - gashpon.carcountE*0.01f + gashpon.carcountF*0.005f) * Time.deltaTime;  
+            sliders.value -= (carbonvalue + coalnumber*0.001f + partnumber*0.001f - gashpon.carcountE*0.002f + gashpon.carcountF*0.001f) * Time.deltaTime;  
         }
         
         if (sliders.value >= 1)

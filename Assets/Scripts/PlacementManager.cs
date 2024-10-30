@@ -11,7 +11,7 @@ public class PlacementManager : MonoBehaviour
     private Dictionary<Vector3Int, StructureModel> temporaryRoadobjects = new Dictionary<Vector3Int, StructureModel>();
     private Dictionary<Vector3Int, StructureModel> structureDictionary = new Dictionary<Vector3Int, StructureModel>();
 
-    private void Start()
+    private void Awake()
     {
         Inst = this;
         placementGrid = new Grid(width, height);

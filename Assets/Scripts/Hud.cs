@@ -19,6 +19,7 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
     public CarbonSum carbonsum;
     public Coal coal;
     public GameObject Marketpanel;
+    public GameObject resourcepanel;
     public enum State
     {
         None,
@@ -27,6 +28,10 @@ public class Hud : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragH
         Remove,
     }
 
+    public void Sideclick()
+    {
+        resourcepanel.SetActive(!resourcepanel.activeSelf);
+    }
     public static Hud Inst { get; private set; }
     public DataManager.HouseData ClickHouseData { get; private set; }
 

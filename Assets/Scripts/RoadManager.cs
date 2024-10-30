@@ -7,7 +7,7 @@ using UnityEngine;
 public class RoadManager : MonoBehaviour
 {
     public static RoadManager Inst { get; private set; }
-    
+
     public PlacementManager placementManager;
 
     public List<Vector3Int> temporaryPlacementPositions = new List<Vector3Int>();
@@ -21,10 +21,20 @@ public class RoadManager : MonoBehaviour
     private void Start()
     {
         Inst = this;
+        loadroaddata();
         roadFixer = GetComponent<RoadFixer>();
     }
 
-    public void PlaceRoad(Vector3Int position)
+    private void loadroaddata()
+    {
+        foreach (var road in DataManager.Inst.roads)
+        {
+            PlaceRoad(road.pos, false);
+            FinishPlacingRoad();
+        }
+    }
+
+    public void PlaceRoad(Vector3Int position, bool save = true)
     {
         if (placementManager.CheckIfPositionInBound(position) == false)
             return;
@@ -40,8 +50,10 @@ public class RoadManager : MonoBehaviour
 
             temporaryPlacementPositions.Add(position);
             placementManager.PlaceTemporaryStructure(position, roadFixer.deadEnd, CellType.Road);
-            DataManager.Inst.SetRoadData(position);
-
+            if (save)
+            {
+                DataManager.Inst.SetRoadData(position);
+            }
         }
         else
         {
@@ -63,10 +75,12 @@ public class RoadManager : MonoBehaviour
                 {
                     roadPositionsToRecheck.Add(temporaryPosition);
                     continue;
-                }  
+                }
+
                 placementManager.PlaceTemporaryStructure(temporaryPosition, roadFixer.deadEnd, CellType.Road);
             }
         }
+
         FixRoadPrefabs();
     }
 
@@ -78,12 +92,13 @@ public class RoadManager : MonoBehaviour
             var neighbours = placementManager.GetNeighboursOfTypeFor(temporaryPosition, CellType.Road);
             foreach (var roadposition in neighbours)
             {
-                if (roadPositionsToRecheck.Contains(roadposition)==false)
+                if (roadPositionsToRecheck.Contains(roadposition) == false)
                 {
                     roadPositionsToRecheck.Add(roadposition);
                 }
             }
         }
+
         foreach (var positionToFix in roadPositionsToRecheck)
         {
             roadFixer.FixRoadAtPosition(placementManager, positionToFix);
@@ -98,6 +113,7 @@ public class RoadManager : MonoBehaviour
         {
             AudioPlayer.instance.PlayPlacementSound();
         }
+
         temporaryPlacementPositions.Clear();
         startPosition = Vector3Int.zero;
     }

@@ -18,7 +18,8 @@ public class TimeManager : MonoBehaviour
     public bool enableRealTimeUpdate = true;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI btnText;
-
+    public Animator animator;
+    
     private void OnEnable()
     {
         OnDayChanged += UpdateTime;
@@ -42,6 +43,7 @@ public class TimeManager : MonoBehaviour
 // Start is called before the first frame update
     void Start()
     {
+        
         Pause(false);
         Day = 01;
         Month = 01;
@@ -52,6 +54,7 @@ public class TimeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         var passDay = Time.deltaTime / dayToRealTime;
         timer -= Time.deltaTime;
         if (!enableRealTimeUpdate)
@@ -95,6 +98,7 @@ public class TimeManager : MonoBehaviour
         }
         else
         {
+            
             Pause(_paused);
         }
     }
@@ -102,5 +106,6 @@ public class TimeManager : MonoBehaviour
     public void Pause(bool isPaused)
     {
         enableRealTimeUpdate = !isPaused;
+        animator.speed = isPaused ? 0f : 1f;
     }
 }
