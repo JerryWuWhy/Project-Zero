@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -19,13 +20,25 @@ public class MarketPanel : MonoBehaviour
     public Money Money;
     public Coal Coal;
     public GameObject coaltrend;
+    public CoalMarketTrend coalmarkettrend;
+    public TextMeshProUGUI coalmoney;
+    public TextMeshProUGUI coal;
+    public TextMeshProUGUI text;
+    
     private void Start()
     {
+        text.text = (" ");
         coalpanel.SetActive(false);
         Mechanicalpanel.SetActive(false);
         Ironpanel.SetActive(false);
         Lithiumpanel.SetActive(false);
         Specialpanel.SetActive(false);
+    }
+
+    private void Update()
+    {
+        coalmoney.text = coalpurchaseprice.ToString();
+        coal.text = coalsaleprice.ToString();
     }
 
     public void closepanel()
@@ -63,8 +76,14 @@ public class MarketPanel : MonoBehaviour
     {
         if (Money.counter >= coalpurchaseprice)
         {
+            text.text = ("Trade sucess");
             Money.counter -= coalpurchaseprice;
             Coal.counterC += coalpurchaseamount;
+            coalpurchaseprice += 1f;
+        }
+        else
+        {
+            text.text = ("Trade fail");
         }
     }
     
@@ -72,9 +91,15 @@ public class MarketPanel : MonoBehaviour
     {
         if (Coal.counterC>=coalsaleprice)
         {
+            text.text = ("Trade sucess");
             Coal.counterC -= coalsaleprice;
             Money.counter += coalsaleamount;
-            Debug.LogError("1");
+            coalsaleprice -= 1f;
+            coalpurchaseprice -= 1f;
+        }
+        else
+        {
+            text.text = ("Trade fail");
         }
     }
 }

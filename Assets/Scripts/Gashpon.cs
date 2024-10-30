@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public class Gashpon : MonoBehaviour
 {
+    public PlacementManager placementmanager;
     public int times = 1;
     public HousePanel housepanel;
     private GameObject _clickedObject;
@@ -22,7 +23,6 @@ public class Gashpon : MonoBehaviour
     private string[] prizes = { "Normal", "Rare", "Epic", "Legendary", "Unique" };
     // 对应奖品的权重数组，按顺序对应上面的 prizes
     private float[] prizeWeights = { 60, 25, 10, 4, 1 };  // 权重：Normal 最常见, Unique 最稀有
-    
     public Hud hud;
     public TextMeshProUGUI LithiumAmount;
     public int LithiumCount = 0;
@@ -95,24 +95,65 @@ public class Gashpon : MonoBehaviour
         return 0;  // 默认返回第一个奖品（理论上不会发生）
     }
 
+    // 用于记录已使用的生成点坐标
+    private HashSet<Vector3> usedSpawnPositions = new HashSet<Vector3>();
+
     public void SpawnObject(int index)
     {
-        // In the viewport, choose a random point for x and z
-        float randomX = UnityEngine.Random.Range(0.15f, 0.9f);
-        float randomY = UnityEngine.Random.Range(0.15f, 0.9f);
-        Vector3 randomViewportPoint = new Vector3(randomX, randomY, spawnDistance);
+        // 查找所有 Transform 类型的对象，并筛选出指定名称的对象
+        Transform[] allTransforms = FindObjectsOfType<Transform>();
+        List<Transform> spawnPoints = new List<Transform>();
 
-        // Convert viewport coordinates to world coordinates
-        Vector3 worldPosition = mainCamera.ViewportToWorldPoint(randomViewportPoint);
+        foreach (var trans in allTransforms)
+        {
+            if (trans.name == "Road")
+            {
+                spawnPoints.Add(trans);
+            }
+        }
 
-        // Set the y-axis to the fixed height
-        worldPosition.y = fixedY;
+        // 检查是否找到了符合名称的对象
+        if (spawnPoints.Count == 0)
+        {
+            Debug.LogWarning("没有找到名为 'Road' 的生成点。");
+            return;
+        }
 
-        // Instantiate the object from the list based on the random index
+        // 过滤掉已使用的生成点，确保只选择未使用的生成点
+        List<Transform> availableSpawnPoints = spawnPoints.FindAll(sp => !usedSpawnPositions.Contains(new Vector3(sp.position.x, 0f, sp.position.z)));
+
+        // 检查是否还有未使用的生成点
+        if (availableSpawnPoints.Count == 0)
+        {
+            Debug.LogWarning("所有生成点都已被使用，无法生成新的对象。");
+            return;
+        }
+    
+        // 随机选择一个未使用的生成点
+        Transform selectedSpawnPoint = availableSpawnPoints[UnityEngine.Random.Range(0, availableSpawnPoints.Count)];
+        Vector3 spawnPosition = selectedSpawnPoint.position;
+    
+        // 设置生成物体的 y 坐标为 fixedY
+        spawnPosition.y = fixedY; // 设置固定高度
+    
+        // 根据索引从 CarConfigManager 中获取对象的配置
         var carConfig = CarConfigManager.Inst.CarConfigs[index];
         GameObject objectToSpawn = carConfig.prefab;
-        Instantiate(objectToSpawn, worldPosition, Quaternion.identity);
-        DataManager.Inst.AddCarData(worldPosition, carConfig.id, carConfig.carbonType);
+        GameObject spawnedObject = Instantiate(objectToSpawn, spawnPosition, Quaternion.identity);
+    
+        // 启动 Car 的移动逻辑
+        Car carComponent = spawnedObject.GetComponent<Car>();
+        // if (carComponent != null)
+        // {
+        //     carComponent.StartMovingToRoad();
+        //     Debug.LogWarning("1");
+        // }
+    
+        // 将该位置（忽略高度）添加到已使用的生成点集合中
+        usedSpawnPositions.Add(new Vector3(spawnPosition.x, 0f, spawnPosition.z));
+    
+        // 添加对象数据到数据管理器
+        DataManager.Inst.AddCarData(spawnPosition, carConfig.id, carConfig.carbonType);
     }
 
     private void Update()

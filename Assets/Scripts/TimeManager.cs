@@ -99,7 +99,7 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    private void Pause(bool isPaused)
+    public void Pause(bool isPaused)
     {
         enableRealTimeUpdate = !isPaused;
     }

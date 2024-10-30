@@ -12,12 +12,17 @@ public class Money : MonoBehaviour
 
     public static Money Inst { get; private set; }
     private float timer = 0f;
+    public TimeManager timemanager;
     void Update()
     {
             
-            increaseAmount = 0.5f;
+                increaseAmount = 0.5f;
                 // Increment the timer based on time passed since last frame
-                timer += Time.deltaTime;
+                if (timemanager.enableRealTimeUpdate)
+                {
+                    timer += Time.deltaTime;
+                }
+                
 
                 // Check if enough time has passed based on the interval
                 if (timer >= interval)

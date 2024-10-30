@@ -20,6 +20,7 @@ public class MechanicalParts : MonoBehaviour
     public float Fcost = 100f;
     public TextMeshProUGUI Eprice;
     public TextMeshProUGUI Fprice;
+    public TimeManager timemanager;
     private void Awake()
     {
         Inst = this;
@@ -40,8 +41,11 @@ public class MechanicalParts : MonoBehaviour
         }
 
         increaseAmount = 50f * counter;
-
-        timer += Time.deltaTime;
+        if (timemanager.enableRealTimeUpdate)
+        {
+            timer += Time.deltaTime; 
+        }
+        
 
         // Check if enough time has passed based on the interval
         if (timer >= interval)

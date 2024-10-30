@@ -86,4 +86,44 @@ public class DataManager : MonoBehaviour
 
         return null;
     }
+    
+    
+    
+    
+    [Serializable]
+    public class RoadData
+    {
+        public Vector3Int pos;
+    }
+    public List<RoadData> roads;
+    
+    public void SetRoadData(Vector3Int pos)
+    {
+        
+        roads.Add(new RoadData
+        {
+            
+            pos = pos,
+            
+        });
+    }
+    
+
+    public RoadData GetRoadData(Vector3Int pos)
+    {
+        foreach (var road in roads)
+        {
+            if (road.pos == pos)
+            {
+                return road;
+            }
+        }
+
+        return null;
+    }
 }
+
+
+
+
+

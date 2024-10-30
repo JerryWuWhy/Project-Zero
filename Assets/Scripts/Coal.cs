@@ -18,7 +18,7 @@ public class Coal : MonoBehaviour
     public string unit = "T"; // The unit to display after the number
     private float timer = 0f;
     public static Coal Inst { get; private set; }
-
+    public TimeManager timemanager;
     private void Update()
     {
         
@@ -48,7 +48,11 @@ public class Coal : MonoBehaviour
         increaseAmountLithium = 0.5f * countl;
 
         // Increment the timer based on time passed since last frame
-        timer += Time.deltaTime;
+        if (timemanager.enableRealTimeUpdate)
+        {
+            timer += Time.deltaTime;
+        }
+        
 
         // Check if enough time has passed based on the interval
         if (timer >= interval)

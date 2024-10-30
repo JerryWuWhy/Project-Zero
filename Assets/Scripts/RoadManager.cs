@@ -40,6 +40,7 @@ public class RoadManager : MonoBehaviour
 
             temporaryPlacementPositions.Add(position);
             placementManager.PlaceTemporaryStructure(position, roadFixer.deadEnd, CellType.Road);
+            DataManager.Inst.SetRoadData(position);
 
         }
         else
