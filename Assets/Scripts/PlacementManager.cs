@@ -1,10 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlacementManager : MonoBehaviour
 {
+    
     public static PlacementManager Inst { get; private set; }
     public int width, height;
     Grid placementGrid;
@@ -17,6 +16,48 @@ public class PlacementManager : MonoBehaviour
         placementGrid = new Grid(width, height);
     }
 
+    private void Start()
+    {
+        if (DataManager.Inst.houses.Count == 0)
+        {
+            foreach (var config in ConfigManager.Inst.initialHouseConfigs)
+            {
+                DataManager.Inst.SetHouseData(config.blockId, config.houseId);
+            }
+        }
+
+        foreach (var house in DataManager.Inst.houses)
+        {
+            PlaceHouse(house.blockId, house.houseId, false);
+        }
+    }
+    public Transform GetHouseTransformByBlockId(int blockId)
+    {
+        // 找到 blockId 对应的 BlockConfig
+        var blockConfig = ConfigManager.Inst.GetBlockConfig(blockId);
+        if (blockConfig != null)
+        {
+            // 找到 blockConfig.housePos 对应的 StructureModel
+            if (structureDictionary.ContainsKey(blockConfig.housePos))
+            {
+                return structureDictionary[blockConfig.housePos].transform;
+            }
+        }
+
+        return null; // 如果找不到，返回 null
+    }
+
+    public void PlaceHouse(int blockId, int houseId, bool save = true)
+    {
+        var blockConfig = ConfigManager.Inst.GetBlockConfig(blockId);
+        var houseConfig = ConfigManager.Inst.GetHouseConfig(houseId);
+        PlaceObjectOnTheMap(blockConfig.housePos, houseConfig.prefab, CellType.Structure);
+        if (save)
+        {
+            DataManager.Inst.SetHouseData(blockId, houseId);
+        }
+    }
+
     internal CellType[] GetNeighbourTypesFor(Vector3Int position)
     {
         return placementGrid.GetAllAdjacentCellTypes(position.x, position.z);
@@ -24,10 +65,11 @@ public class PlacementManager : MonoBehaviour
 
     internal bool CheckIfPositionInBound(Vector3Int position)
     {
-        if(position.x >= 0 && position.x < width && position.z >=0 && position.z < height)
+        if (position.x >= 0 && position.x < width && position.z >= 0 && position.z < height)
         {
             return true;
         }
+
         return false;
     }
 
@@ -45,13 +87,14 @@ public class PlacementManager : MonoBehaviour
         {
             Destroy(structureDictionary[position].gameObject);
             structureDictionary.Remove(position);
-            placementGrid[position.x, position.z] = CellType.Empty;//change back the cell type
+            placementGrid[position.x, position.z] = CellType.Empty; //change back the cell type
         }
     }
-
+    
     private void DestroyNatureAt(Vector3Int position)
     {
-        RaycastHit[] hits = Physics.BoxCastAll(position + new Vector3(0, 0.5f, 0), new Vector3(0.5f, 0.5f, 0.5f), transform.up, Quaternion.identity, 1f, 1 << LayerMask.NameToLayer("Nature"));
+        RaycastHit[] hits = Physics.BoxCastAll(position + new Vector3(0, 0.5f, 0), new Vector3(0.5f, 0.5f, 0.5f),
+            transform.up, Quaternion.identity, 1f, 1 << LayerMask.NameToLayer("Nature"));
         foreach (var item in hits)
         {
             Destroy(item.collider.gameObject);
@@ -83,6 +126,7 @@ public class PlacementManager : MonoBehaviour
         {
             neighbours.Add(new Vector3Int(point.X, 0, point.Y));
         }
+
         return neighbours;
     }
 
@@ -98,12 +142,14 @@ public class PlacementManager : MonoBehaviour
 
     internal List<Vector3Int> GetPathBetween(Vector3Int startPosition, Vector3Int endPosition)
     {
-        var resultPath = GridSearch.AStarSearch(placementGrid, new Point(startPosition.x, startPosition.z), new Point(endPosition.x, endPosition.z));
+        var resultPath = GridSearch.AStarSearch(placementGrid, new Point(startPosition.x, startPosition.z),
+            new Point(endPosition.x, endPosition.z));
         List<Vector3Int> path = new List<Vector3Int>();
         foreach (Point point in resultPath)
         {
             path.Add(new Vector3Int(point.X, 0, point.Y));
         }
+
         return path;
     }
 
@@ -115,6 +161,7 @@ public class PlacementManager : MonoBehaviour
             placementGrid[position.x, position.z] = CellType.Empty;
             Destroy(structure.gameObject);
         }
+
         temporaryRoadobjects.Clear();
     }
 
@@ -125,6 +172,7 @@ public class PlacementManager : MonoBehaviour
             structureDictionary.Add(structure.Key, structure.Value);
             DestroyNatureAt(structure.Key);
         }
+
         temporaryRoadobjects.Clear();
     }
 

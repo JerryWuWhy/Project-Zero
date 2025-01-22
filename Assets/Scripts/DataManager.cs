@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Habby.Storage;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class DataManager : MonoBehaviour
 {
+    public string prefabTag = "Prefab";
     public static DataManager Inst { get; private set; }
 
     private StorageContainer _dataContainer;
@@ -15,7 +14,7 @@ public class DataManager : MonoBehaviour
     public class HouseData
     {
         public int houseId;
-        public Vector3Int pos;
+        public int blockId;
         public OutputType outputType;
     }
 
@@ -28,17 +27,17 @@ public class DataManager : MonoBehaviour
         houses = _dataContainer.Get("houses", new List<HouseData>());
         cars = _dataContainer.Get("cars", new List<CarData>());
         roads = _dataContainer.Get("roads", new List<RoadData>());
-        
+
         var test = _dataContainer.Get("test", new Vector3Int(1, 1, 1));
         _dataContainer.Save();
         // Storage.ClearAll();
     }
 
-    public void SetHouseData(Vector3Int pos, int houseId)
+    public void SetHouseData(int blockId, int houseId)
     {
         foreach (var house in houses)
         {
-            if (house.pos == pos)
+            if (house.blockId == blockId)
             {
                 house.houseId = houseId;
                 return;
@@ -49,23 +48,10 @@ public class DataManager : MonoBehaviour
         houses.Add(new HouseData
         {
             houseId = houseId,
-            pos = pos,
+            blockId = blockId,
             outputType = houseConfig.outputType
         });
         _dataContainer.Save();
-    }
-
-    public HouseData GetHouseData(Vector3Int pos)
-    {
-        foreach (var house in houses)
-        {
-            if (house.pos == pos)
-            {
-                return house;
-            }
-        }
-
-        return null;
     }
 
     [Serializable]

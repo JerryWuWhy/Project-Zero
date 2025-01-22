@@ -8,6 +8,8 @@ TagManager:
   - Coal
   - Mechanic
   - Gashpon
+  - Prefab
+  - Road
   layers:
   - Default
   - TransparentFX

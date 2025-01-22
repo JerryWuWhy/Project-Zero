@@ -27,9 +27,9 @@ public class RoadManager : MonoBehaviour
 
     private void loadroaddata()
     {
-        foreach (var road in DataManager.Inst.roads)
+        foreach (var road in ConfigManager.Inst.blockConfigs)
         {
-            PlaceRoad(road.pos, false);
+            PlaceRoad(road.roadPos, false);
             FinishPlacingRoad();
         }
     }
